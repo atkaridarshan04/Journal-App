@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: dev
+
+logging:
+  level:
+    com:
+      project: DEBUG
+
+#logging:
+#  level:
+#    root: OFF
