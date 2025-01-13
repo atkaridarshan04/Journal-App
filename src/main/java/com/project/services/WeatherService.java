@@ -1,6 +1,8 @@
 package com.project.services;
 
 import com.project.api.response.WeatherResponse;
+import com.project.app_cache.AppCache;
+import com.project.constants.PlaceHolders;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,18 +18,18 @@ public class WeatherService {
     @Value("${weather.api.key}")
     private String apiKey;
 
-    private static final String API = "https://api.weatherstack.com/current?access_key=<apiKey>&query=<city>";
-
     private final RestTemplate restTemplate;
+    private final AppCache appCache;
 
     @Autowired
-    public WeatherService(RestTemplate restTemplate) {
+    public WeatherService(RestTemplate restTemplate, AppCache appCache) {
         this.restTemplate = restTemplate;
+        this.appCache = appCache;
     }
 
     public WeatherResponse getWeather(String city) {
         try {
-            String finalApi = API.replace("<city>", city).replace("<apiKey>", apiKey);
+            String finalApi = appCache.cache.get(AppCache.keys.WEATHER_API.toString()).replace(PlaceHolders.CITY, city).replace(PlaceHolders.API_KEY, apiKey);
             ResponseEntity<WeatherResponse> response = restTemplate.exchange(finalApi, HttpMethod.GET, null, WeatherResponse.class);
             return response.getBody();
         } catch (Exception e) {
