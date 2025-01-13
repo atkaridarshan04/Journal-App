@@ -4,8 +4,6 @@ import com.project.entities.UserEntity;
 import com.project.repositories.UserRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,9 +18,12 @@ import java.util.List;
 public class UserService {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final UserRepo userRepo;
 
     @Autowired
-    private UserRepo userRepo;
+    public UserService(UserRepo userRepo){
+        this.userRepo = userRepo;
+    }
 
     public List<UserEntity> getAllUsers() {
         return userRepo.findAll();

@@ -19,14 +19,17 @@ import java.util.Optional;
 @RequestMapping("/journal")
 public class JournalController {
 
-    @Autowired
-    private JournalService journalEntryService;
+    private final JournalService journalEntryService;
+    private final UserService userService;
 
     @Autowired
-    private UserService userService;
+    public JournalController(JournalService journalEntryService, UserService userService){
+        this.journalEntryService = journalEntryService;
+        this.userService = userService;
+    }
 
     @GetMapping
-    public ResponseEntity<?> getAllJournalsEntriesByUser() {
+    public ResponseEntity<List<JournalEntity>> getAllJournalsEntriesByUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         UserEntity user = userService.findUserByUsername(username);
@@ -66,7 +69,7 @@ public class JournalController {
     }
 
     @DeleteMapping("id/{id}")
-    public ResponseEntity<?> deleteJournalEntry(@PathVariable ObjectId id) {
+    public ResponseEntity<String> deleteJournalEntry(@PathVariable ObjectId id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         boolean removed = journalEntryService.deleteEntryById(id, username);

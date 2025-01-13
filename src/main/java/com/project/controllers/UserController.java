@@ -1,8 +1,10 @@
 package com.project.controllers;
 
+import com.project.api.response.WeatherResponse;
 import com.project.entities.UserEntity;
 import com.project.repositories.UserRepo;
 import com.project.services.UserService;
+import com.project.services.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +16,27 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final UserRepo userRepo;
+    private final WeatherService weatherService;
 
     @Autowired
-    private UserRepo userRepo;
+    public UserController(UserService userService, UserRepo userRepo, WeatherService weatherService){
+        this.userService = userService;
+        this.userRepo = userRepo;
+        this.weatherService = weatherService;
+    }
+
+    @GetMapping
+    public ResponseEntity<String> getUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        WeatherResponse weatherResponse = weatherService.getWeather("Mumbai");
+        String feelsLike = "";
+        if (weatherResponse != null){
+            feelsLike = " Weather feels like " + weatherResponse.getCurrent().getFeelslike();
+        }
+        return new ResponseEntity<>("Hi " + authentication.getName() + feelsLike, HttpStatus.OK);
+    }
 
     @PutMapping
     public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity user) {
@@ -36,7 +54,7 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteUser() {
+    public ResponseEntity<HttpStatus> deleteUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userRepo.deleteUserByUsername(authentication.getName());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

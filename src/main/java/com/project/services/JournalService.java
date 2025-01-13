@@ -17,11 +17,15 @@ import java.util.Optional;
 @Component
 public class JournalService {
 
-    @Autowired
-    private JournalRepo journalRepo;
+    private final JournalRepo journalRepo;
+    private final UserService userService;
 
     @Autowired
-    private UserService userService;
+    public JournalService(JournalRepo journalRepo, UserService userService){
+        this.journalRepo = journalRepo;
+        this.userService = userService;
+
+    }
 
     @Transactional
     public void saveEntry(JournalEntity entry, String username) {
@@ -33,7 +37,6 @@ public class JournalService {
             userService.saveUser(user);
         } catch (Exception e) {
             log.error("Exception", e);
-            throw new RuntimeException("An error occurred while saving entry", e);
         }
     }
 
@@ -65,8 +68,7 @@ public class JournalService {
                 journalRepo.deleteById(id);
             }
         } catch (Exception e){
-            System.out.println(e);
-            throw new RuntimeException("An error occur while deleting the entry ", e);
+            log.error("Error occurred", e);
         }
         return removed;
     }

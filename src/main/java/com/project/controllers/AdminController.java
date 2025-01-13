@@ -13,8 +13,12 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public AdminController(UserService userService){
+        this.userService = userService;
+    }
 
     @GetMapping("/all-users")
     public ResponseEntity<List<UserEntity>> getAllUsers() {
@@ -26,7 +30,7 @@ public class AdminController {
     }
 
     @PostMapping("/create-admin-user")
-    public ResponseEntity<?> createAdmin(@RequestBody UserEntity user){
+    public ResponseEntity<HttpStatus> createAdmin(@RequestBody UserEntity user){
         userService.saveAdmin(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

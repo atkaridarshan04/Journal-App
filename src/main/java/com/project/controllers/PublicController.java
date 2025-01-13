@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/public")
 public class PublicController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public PublicController(UserService userService){
+        this.userService = userService;
+    }
 
     @GetMapping("/health-check")
     public String healthCheck() {
@@ -21,10 +25,8 @@ public class PublicController {
 
     @PostMapping("/create-user")
     public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user) {
-        if (!user.getPassword().isEmpty() && !user.getUsername().isEmpty()) {
-            if (userService.saveNewUser(user)){
+        if (!user.getPassword().isEmpty() && !user.getUsername().isEmpty() && userService.saveNewUser(user)) {
             return new ResponseEntity<>(user, HttpStatus.CREATED);
-            }
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
