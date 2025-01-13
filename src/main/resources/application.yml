@@ -1,12 +1,20 @@
 spring:
-  profiles:
-    active: dev
+  data:
+    mongodb:
+      uri: mongodb+srv://atlas_000:atlas_000@cluster0.g3nsj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      database: journalDB
+      auto-index-creation: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
 
 logging:
   level:
     com:
       project: DEBUG
 
-#logging:
-#  level:
-#    root: OFF
+weather:
+  api:
+    key: 8210e82c0a06b0b628a63e2c6f8ebfbc
