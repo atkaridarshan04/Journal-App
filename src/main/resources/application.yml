@@ -1,12 +1,13 @@
 spring:
   data:
     mongodb:
-      uri: xxxxxxxxxxxxxxxx
+      uri: mongodb+srv://<username>:<db_password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       database: journalDB
       auto-index-creation: true
-  redis:
-    host: localhost
-    port: 6379
+    redis:
+      host: redis-xxxx.xxxx.xx-xxxx-1-1.ec2.redns.redis-cloud.com
+      port: 13698
+      password: xxxxxxxxxxx
   mail:
     host: smtp.gmail.com
     port: 587
@@ -24,11 +25,14 @@ server:
   servlet:
     context-path: /api/v1
 
+weather:
+  api:
+    key: xxxxxxxxxxxxxxxx
+
 logging:
   level:
     com:
       project: DEBUG
+    org.springframework.data.redis: DEBUG
+    io.lettuce.core: DEBUG
 
-weather:
-  api:
-    key: xxxxxxxxxxxxxxxx

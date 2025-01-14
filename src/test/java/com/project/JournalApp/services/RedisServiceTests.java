@@ -12,8 +12,8 @@ public class RedisServiceTests {
 
     @Test
     public void testRedisConnection(){
-        redisTemplate.opsForValue().set("email", "test@yahoo.com");
-        Object email = redisTemplate.opsForValue().get("email");
-        System.out.println(email);
+        redisTemplate.opsForValue().set("test", "test@yahoo.com");
+        Object test = redisTemplate.opsForValue().get("test");
+        System.out.println(test);
     }
 }
