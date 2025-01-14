@@ -21,19 +21,23 @@ public class UserController {
     private final WeatherService weatherService;
 
     @Autowired
-    public UserController(UserService userService, UserRepo userRepo, WeatherService weatherService){
+    public UserController(UserService userService, UserRepo userRepo, WeatherService weatherService) {
         this.userService = userService;
         this.userRepo = userRepo;
         this.weatherService = weatherService;
     }
 
     @GetMapping
-    public ResponseEntity<String> getUser(){
+    public ResponseEntity<String> getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        WeatherResponse weatherResponse = weatherService.getWeather("Mumbai");
+        UserEntity user = userService.findUserByUsername(authentication.getName());
+        WeatherResponse weatherResponse = weatherService.getWeather(user.getCity() != null ? user.getCity() : "Mumbai");
+
         String feelsLike = "";
-        if (weatherResponse != null){
+        if (weatherResponse != null && weatherResponse.getCurrent() != null) {
             feelsLike = " Weather feels like " + weatherResponse.getCurrent().getFeelslike();
+        } else {
+            feelsLike = " Weather information is unavailable.";
         }
         return new ResponseEntity<>("Hi " + authentication.getName() + feelsLike, HttpStatus.OK);
     }
@@ -47,6 +51,7 @@ public class UserController {
         userInDb.setUsername(user.getUsername());
         userInDb.setPassword(user.getPassword());
         userInDb.setSentimentAnalysis(user.isSentimentAnalysis());
+        userInDb.setCity(user.getCity());
 
         if (userService.saveNewUser(userInDb)) {
             return new ResponseEntity<>(userInDb, HttpStatus.OK);

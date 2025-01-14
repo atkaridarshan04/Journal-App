@@ -22,6 +22,7 @@ public class UserEntity {
     @Indexed(unique = true) // by default, it does not initialize indexing, so we add one more 1 in properties file
     @NonNull
     private String username;
+    private String city;
     private String email;
     private boolean sentimentAnalysis;
     @NonNull
