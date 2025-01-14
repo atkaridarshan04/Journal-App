@@ -1,9 +1,20 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://atlas_000:atlas_000@cluster0.g3nsj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      uri: xxxxxxxxxxxxxxxx
       database: journalDB
       auto-index-creation: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: example@gmail.com
+    password: xxxx xxxx xxxx xxxx
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 server:
   port: 8080
@@ -17,4 +28,4 @@ logging:
 
 weather:
   api:
-    key: 8210e82c0a06b0b628a63e2c6f8ebfbc
+    key: xxxxxxxxxxxxxxxx
