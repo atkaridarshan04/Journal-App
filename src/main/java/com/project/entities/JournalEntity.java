@@ -1,5 +1,7 @@
 package com.project.entities;
 
+import com.mongodb.lang.NonNull;
+import com.project.enums.Sentiment;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -15,4 +17,6 @@ public class JournalEntity {
     private String title;
     private String content;
     private LocalDateTime date;
+    @NonNull
+    private Sentiment sentiment;
 }

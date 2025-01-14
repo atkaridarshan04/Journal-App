@@ -46,6 +46,7 @@ public class UserController {
 
         userInDb.setUsername(user.getUsername());
         userInDb.setPassword(user.getPassword());
+        userInDb.setSentimentAnalysis(user.isSentimentAnalysis());
 
         if (userService.saveNewUser(userInDb)) {
             return new ResponseEntity<>(userInDb, HttpStatus.OK);
@@ -56,7 +57,8 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userRepo.deleteUserByUsername(authentication.getName());
+        String username = authentication.getName();
+        userService.deleteUser(username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -1,15 +1,19 @@
 package com.project.scheduler;
 
-import com.project.app_cache.AppCache;
+import com.project.cache.AppCache;
 import com.project.entities.JournalEntity;
 import com.project.entities.UserEntity;
+import com.project.enums.Sentiment;
 import com.project.services.EmailService;
 import com.project.repositories.UserRepoImpl;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JobsScheduler {
@@ -29,13 +33,25 @@ public class JobsScheduler {
         List<UserEntity> users = userRepoImpl.getUserForSA();
         for (UserEntity user : users) {
             List<JournalEntity> journalEntries = user.getJournalEntries();
-            List<String> filteredContent = journalEntries.stream().filter(x -> x.getDate().isAfter(LocalDateTime.now().minusDays(7))).map(JournalEntity::getTitle).toList();
-            String entry = String.join(" ", filteredContent);
+            List<Sentiment> sentiments = journalEntries.stream().filter(x -> x.getDate().isAfter(LocalDateTime.now().minus(7, ChronoUnit.DAYS))).map(JournalEntity::getSentiment).toList();
 
-            emailService.sendMail(user.getEmail(),
-                    "Sentiment Analysis for last 7 days",
-                    entry
-            );
+            Map<Sentiment, Integer> sentimentCounts = new HashMap<>();
+            for (Sentiment sentiment : sentiments) {
+                if (sentiment != null)
+                    sentimentCounts.put(sentiment, sentimentCounts.getOrDefault(sentiment, 0) + 1);
+            }
+
+            Sentiment mostFrequentSentiment = null;
+            int maxCount = 0;
+            for (Map.Entry<Sentiment, Integer> entry : sentimentCounts.entrySet()) {
+                if (entry.getValue() > maxCount) {
+                    maxCount = entry.getValue();
+                    mostFrequentSentiment = entry.getKey();
+                }
+            }
+            if (mostFrequentSentiment != null) {
+                emailService.sendMail(user.getEmail(), "Sentiment for previous week", mostFrequentSentiment.toString());
+            }
         }
     }
 

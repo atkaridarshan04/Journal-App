@@ -1,7 +1,7 @@
 package com.project.services;
 
 import com.project.api.response.WeatherResponse;
-import com.project.app_cache.AppCache;
+import com.project.cache.AppCache;
 import com.project.constants.PlaceHolders;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

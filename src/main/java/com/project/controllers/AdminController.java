@@ -1,6 +1,6 @@
 package com.project.controllers;
 
-import com.project.app_cache.AppCache;
+import com.project.cache.AppCache;
 import com.project.entities.UserEntity;
 import com.project.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

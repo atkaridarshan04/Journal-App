@@ -15,7 +15,7 @@ public class EmailServiceTests {
     @Test
     public void testSendMail() {
         Assertions.assertDoesNotThrow(() -> emailService.sendMail(
-                "example@gmail.com",
+                "darshan211104@gmail.com",
                 "Testing Mail Service",
                 "This mail is send while testing mail service using Java Mail Sender"
         ));

@@ -1,4 +1,4 @@
-package com.project.app_cache;
+package com.project.cache;
 
 import com.project.entities.ConfigEntity;
 import com.project.repositories.ConfigRepo;
