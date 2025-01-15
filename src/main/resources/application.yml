@@ -1,3 +1,11 @@
+jwt:
+  secret:
+    key: "xxxxxxxxxxxxxxxxxxxxxxx"
+
+weather:
+  api:
+    key: xxxxxxxxxxxxxxxxx
+
 spring:
   data:
     mongodb:
@@ -6,6 +14,7 @@ spring:
       auto-index-creation: true
     redis:
       host: redis-xxxx.xxxx.xx-xxxx-1-1.ec2.redns.redis-cloud.com
+
       port: 13698
       password: xxxxxxxxxxx
   mail:
@@ -24,10 +33,6 @@ server:
   port: 8080
   servlet:
     context-path: /api/v1
-
-weather:
-  api:
-    key: xxxxxxxxxxxxxxxx
 
 logging:
   level:
