@@ -1,11 +1,15 @@
 package com.project.services;
 
+import com.project.dto.UserDTO;
 import com.project.entities.JournalEntity;
 import com.project.entities.UserEntity;
 import com.project.repositories.JournalRepo;
 import com.project.repositories.UserRepo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,21 +37,26 @@ public class UserService {
         return userRepo.findAll();
     }
 
-    public boolean saveNewUser(UserEntity user) {
+    public UserEntity saveNewUser(UserDTO user) {
         try {
-            user.setDate(LocalDateTime.now());
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRoles(Arrays.asList("USER"));
-            userRepo.save(user);
-            return true;
+            UserEntity newUser = new UserEntity();
+            newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            newUser.setCity(user.getCity());
+            newUser.setUsername(user.getUsername());
+            newUser.setSentimentAnalysis(user.isSentimentAnalysis());
+            newUser.setEmail(user.getEmail());
+            newUser.setDate(LocalDateTime.now());
+            newUser.setRoles(Arrays.asList("USER"));
+
+            return userRepo.save(newUser);
         } catch (Exception e) {
             log.error("Error occurred for {}: ", user.getUsername(), e);
-            return false;
+            return null;
         }
     }
 
     public void saveUser(UserEntity user) {
-        userRepo.save(user);
+             userRepo.save(user);
     }
 
     public UserEntity findUserByUsername(String username) {
@@ -78,4 +87,15 @@ public class UserService {
             log.error("Error occurred for {}: ", user.getUsername(), e);
         }
     }
+
+    public UserEntity updateUser(UserDTO userDTO, UserEntity userEntity) {
+        userEntity.setUsername(ObjectUtils.defaultIfNull(userDTO.getUsername(), userEntity.getUsername()));
+        userEntity.setPassword(ObjectUtils.defaultIfNull(passwordEncoder.encode(userDTO.getPassword()), userEntity.getPassword()));
+        userEntity.setSentimentAnalysis(userDTO.isSentimentAnalysis());
+        userEntity.setCity(ObjectUtils.defaultIfNull(userDTO.getCity(), userEntity.getCity()));
+        userEntity.setEmail(ObjectUtils.defaultIfNull(userDTO.getEmail(), userEntity.getEmail()));
+
+        return userRepo.save(userEntity);
+    }
 }
+

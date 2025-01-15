@@ -1,8 +1,10 @@
 package com.project.controllers;
 
 import com.project.cache.AppCache;
+import com.project.dto.UserDTO;
 import com.project.entities.UserEntity;
 import com.project.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin")
+@Tag(name = "Admin APIs")
 public class AdminController {
 
     private final UserService userService;
@@ -33,8 +36,10 @@ public class AdminController {
     }
 
     @PostMapping("/create-admin-user")
-    public ResponseEntity<HttpStatus> createAdmin(@RequestBody UserEntity user){
-        userService.saveAdmin(user);
+    public ResponseEntity<HttpStatus> createAdmin(@RequestBody UserDTO user){
+        UserEntity newUser = new UserEntity();
+
+        userService.saveAdmin(newUser);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
