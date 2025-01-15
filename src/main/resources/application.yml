@@ -1,27 +1,26 @@
 jwt:
   secret:
-    key: "xxxxxxxxxxxxxxxxxxxxxxx"
+    key: ${JWT_SECRET}
 
 weather:
   api:
-    key: xxxxxxxxxxxxxxxxx
+    key: ${WEATHER_API_KEY}
 
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://<username>:<db_password>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      uri: ${MONGO_URI}
       database: journalDB
       auto-index-creation: true
     redis:
-      host: redis-xxxx.xxxx.xx-xxxx-1-1.ec2.redns.redis-cloud.com
-
-      port: 13698
-      password: xxxxxxxxxxx
+      host: ${REDIS_URI}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
   mail:
     host: smtp.gmail.com
     port: 587
-    username: example@gmail.com
-    password: xxxx xxxx xxxx xxxx
+    username: ${email}
+    password: ${APP_PASSWORD}
     properties:
       mail:
         smtp:
@@ -40,4 +39,3 @@ logging:
       project: DEBUG
     org.springframework.data.redis: DEBUG
     io.lettuce.core: DEBUG
-
