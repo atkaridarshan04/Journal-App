@@ -1,10 +1,12 @@
 package com.project.controllers;
 
 import com.project.api.response.WeatherResponse;
+import com.project.dto.UserDTO;
 import com.project.entities.UserEntity;
-import com.project.repositories.UserRepo;
 import com.project.services.UserService;
 import com.project.services.WeatherService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,19 +16,19 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
+@Tag(name = "User APIs",  description = "Create, Read, Update, Delete users")
 public class UserController {
 
     private final UserService userService;
-    private final UserRepo userRepo;
     private final WeatherService weatherService;
 
     @Autowired
-    public UserController(UserService userService, UserRepo userRepo, WeatherService weatherService) {
+    public UserController(UserService userService, WeatherService weatherService) {
         this.userService = userService;
-        this.userRepo = userRepo;
         this.weatherService = weatherService;
     }
 
+    @Operation(summary = "Get user")
     @GetMapping
     public ResponseEntity<String> getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -42,23 +44,21 @@ public class UserController {
         return new ResponseEntity<>("Hi " + authentication.getName() + feelsLike, HttpStatus.OK);
     }
 
+    @Operation(summary = "Update user")
     @PutMapping
-    public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity user) {
+    public ResponseEntity<UserEntity> updateUser(@RequestBody UserDTO userDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        UserEntity userInDb = userService.findUserByUsername(username);
-
-        userInDb.setUsername(user.getUsername());
-        userInDb.setPassword(user.getPassword());
-        userInDb.setSentimentAnalysis(user.isSentimentAnalysis());
-        userInDb.setCity(user.getCity());
-
-        if (userService.saveNewUser(userInDb)) {
-            return new ResponseEntity<>(userInDb, HttpStatus.OK);
+        try {
+            UserEntity userEntity = userService.findUserByUsername(username);
+            UserEntity updatedUser = userService.updateUser(userDTO ,userEntity);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @Operation(summary = "Delete user")
     @DeleteMapping
     public ResponseEntity<HttpStatus> deleteUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
