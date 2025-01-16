@@ -1,10 +1,12 @@
 package com.project.controllers;
 
-import com.project.cache.AppCache;
 import com.project.dto.UserDTO;
 import com.project.entities.UserEntity;
+import com.project.exceptions.DuplicateUsernameException;
 import com.project.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,39 +14,44 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/admin")
 @Tag(name = "Admin APIs")
 public class AdminController {
 
     private final UserService userService;
-    private final AppCache appCache;
 
     @Autowired
-    public AdminController(UserService userService, AppCache appCache){
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.appCache = appCache;
     }
 
     @GetMapping("/all-users")
     public ResponseEntity<List<UserEntity>> getAllUsers() {
-        List<UserEntity> allUsers = userService.getAllUsers();
-        if (allUsers != null && !allUsers.isEmpty()) {
+        try {
+            List<UserEntity> allUsers = userService.getAllUsers();
+            if (allUsers.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
             return new ResponseEntity<>(allUsers, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error occurred while fetching users", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping("/create-admin-user")
-    public ResponseEntity<HttpStatus> createAdmin(@RequestBody UserDTO user){
-        UserEntity newUser = new UserEntity();
-
-        userService.saveAdmin(newUser);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    @GetMapping("/clear-app-cache")
-    public void clearAppCache(){
-        appCache.init();
+    public ResponseEntity<HttpStatus> createAdmin(@Valid @RequestBody UserDTO user) {
+        try {
+            userService.saveAdmin(user);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (DuplicateUsernameException e) {
+            log.warn("Username already exists: {}", user.getUsername());
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch (Exception e) {
+            log.error("Error occurred while creating an admin user", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

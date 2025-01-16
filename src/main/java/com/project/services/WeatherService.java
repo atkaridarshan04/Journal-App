@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.api.response.WeatherResponse;
 import com.project.cache.AppCache;
 import com.project.constants.PlaceHolders;
+import com.project.exceptions.WeatherServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -33,19 +35,22 @@ public class WeatherService {
     public WeatherResponse getWeather(String city) {
         try {
             WeatherResponse weatherResponse = redisService.getCache("weather_of_" + city, WeatherResponse.class);
-            if (weatherResponse != null){
+            if (weatherResponse != null) {
                 return weatherResponse;
             } else {
                 String finalApi = appCache.cache.get(AppCache.keys.WEATHER_API.toString()).replace(PlaceHolders.CITY, city).replace(PlaceHolders.API_KEY, apiKey);
                 ResponseEntity<WeatherResponse> response = restTemplate.exchange(finalApi, HttpMethod.GET, null, WeatherResponse.class);
-                if (response.getBody() != null){
+                if (response.getBody() != null) {
                     redisService.setCache("weather_of_" + city, response.getBody(), 300L);
                 }
                 return response.getBody();
             }
+        } catch (RestClientException e) {
+            log.error("Error occurred while fetching weather data from API: ", e);
+            throw new WeatherServiceException("Failed to fetch weather data from API for city: " + city, e);
         } catch (Exception e) {
-            log.error("Error occurred with fetching: ", e);
-            throw new RuntimeException("Failed to fetch weather data", e);
+            log.error("Unexpected error occurred while fetching weather data: ", e);
+            throw new WeatherServiceException("Failed to fetch weather data for city: " + city, e);
         }
     }
 }

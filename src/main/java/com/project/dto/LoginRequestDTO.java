@@ -1,13 +1,16 @@
 package com.project.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class LoginRequestDTO {
-    @NotEmpty(message = "Username cannot be empty")
+
+    @NotBlank(message = "Username is mandatory")
     private String username;
 
-    @NotEmpty(message = "Password cannot be empty")
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 6)
     private String password;
 }

@@ -31,43 +31,32 @@ public class JournalService {
 
     @Transactional
     public JournalEntity saveEntry(JournalDTO entry, String username) {
-        try {
-            JournalEntity journalEntity = new JournalEntity();
-            journalEntity.setTitle(entry.getTitle());
-            journalEntity.setContent(entry.getContent());
-            journalEntity.setSentiment(entry.getSentiment());
-            journalEntity.setDate(LocalDateTime.now());
-            JournalEntity saved = journalRepo.save(journalEntity);
+        JournalEntity journalEntity = new JournalEntity();
+        journalEntity.setTitle(entry.getTitle());
+        journalEntity.setContent(entry.getContent());
+        journalEntity.setSentiment(entry.getSentiment());
+        journalEntity.setDate(LocalDateTime.now());
+        JournalEntity saved = journalRepo.save(journalEntity);
 
-            UserEntity user = userService.findUserByUsername(username);
-            user.getJournalEntries().add(saved);
-            userService.saveUser(user);
+        UserEntity user = userService.findUserByUsername(username);
+        user.getJournalEntries().add(saved);
+        userService.saveUser(user);
 
-            return saved;
-        } catch (Exception e) {
-            log.error("Exception", e);
-            return null;
-        }
+        return saved;
     }
 
     @Transactional
     public JournalEntity updateEntry(String id, JournalDTO entry) {
-        try {
-            ObjectId objectId = new ObjectId(id);
-            JournalEntity journalEntity = journalRepo.findById(objectId)
-                    .orElseThrow(() -> new IllegalArgumentException("Journal entry not found"));
+        ObjectId objectId = new ObjectId(id);
+        JournalEntity journalEntity = journalRepo.findById(objectId)
+                .orElseThrow(() -> new IllegalArgumentException("Journal entry not found"));
 
-            journalEntity.setTitle(ObjectUtils.defaultIfNull(entry.getTitle(), journalEntity.getTitle()));
-            journalEntity.setContent(ObjectUtils.defaultIfNull(entry.getContent(), journalEntity.getContent()));
-            journalEntity.setSentiment(entry.getSentiment());
+        journalEntity.setTitle(ObjectUtils.defaultIfNull(entry.getTitle(), journalEntity.getTitle()));
+        journalEntity.setContent(ObjectUtils.defaultIfNull(entry.getContent(), journalEntity.getContent()));
+        journalEntity.setSentiment(entry.getSentiment());
 
-            return journalRepo.save(journalEntity);
-        } catch (Exception e) {
-            log.error("Exception while updating journal entry", e);
-            return null;
-        }
+        return journalRepo.save(journalEntity);
     }
-
 
     public List<JournalEntity> getAllEntry() {
         return journalRepo.findAll();
@@ -92,5 +81,4 @@ public class JournalService {
         }
         return removed;
     }
-
 }

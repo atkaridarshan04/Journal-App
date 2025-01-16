@@ -1,8 +1,7 @@
 package com.project.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,13 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 public class UserDTO {
 
-    @NotEmpty
-    @Schema(description = "User's Usernanme")
+    @NotBlank(message = "Username is mandatory")
     private String username;
 
-    @NotEmpty
-    @Size(min = 6)
-    @Schema(description = "Not be less than 6 characters")
+    @NotBlank(message = "Password is mandatory")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
     private String city;
