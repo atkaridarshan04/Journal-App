@@ -1,7 +1,7 @@
 # Journal App
 
 ## Overview
-The Journal App is a Spring Boot-based application designed for managing journal entries with additional features such as user authentication, weather integration, and caching for performance optimization.
+The Journal App is a Spring Boot based application designed for managing journal entries with additional features such as user authentication, weather integration, and caching for performance optimization.
 
 ---
 
@@ -9,10 +9,10 @@ The Journal App is a Spring Boot-based application designed for managing journal
 
 - **User Authentication**: Secure login with JWT-based authentication.
 - **Journal Management**: Create, read, update, and delete journal entries.
-- **Weather Integration**: Fetch weather data to enrich journal entries.
+- **Weather Integration**: Fetch weather data (Form external APIs).
 - **Caching**: Utilizes Redis for faster access to frequently used data.
-- **API Documentation**: Built-in Swagger integration for seamless API testing and exploration.
-- **Scheduler**: Automated background jobs for tasks like cleanup or notifications.
+- **API Documentation**: Built-in Swagger integration for API testing and exploration.
+- **Scheduler**: Automated background jobs for cache cleanup or email sending.
 - **Global Exception Handling**: Ensures consistent error responses.
 
 ---
@@ -82,27 +82,27 @@ Journal-App
    ```
 
 2. **Add Environment Variables**
-   - Ensure all necessary variables are set in the `application.yml` file.
+    - Ensure all necessary variables are set in the `application.yml` file.
 
 3. **Build the Application**
    ```bash
-   ./mvnw clean install
+   ./mvnw clean install -DskipTests=true
    ```
 
 4. **Run the Application**
    ```bash
-   java -jar target/JournalApp/target/getting-started-0.0.1-SNAPSHOT.jar
+   java -jar target/JournalApp/target/filename-version-SNAPSHOT.jar
    ```
 
 5. **Access Swagger UI**
-   - Open your browser and navigate to `http://localhost:8080/swagger-ui.html`.
+    - Open your browser and navigate to `http://localhost:8080/swagger-ui.html`.
 
 ---
 
 ## Docker Deployment
 
 1. **Configure Environment Variables**
-   - Create a `.env` file based on `sample.env` and set the necessary variables.
+    - Create a `.env` file based on `sample.env` and set the necessary variables.
 
 2. **Build Docker Image**
    ```bash
@@ -111,30 +111,39 @@ Journal-App
 
 3. **Run Docker Container**
    ```bash
-   docker run -p 8080:8080 --env-file=.env journal-app
+   docker run -p 8080:8080 --env-file=.env --name JournalApp journal-app
    ```
 
+---
+
+## Deployment
+
+The project is successfully deployed on Render. You can access the Swagger API documentation here:
+
+[Swagger UI - Deployed Application](https://journal-app-9v4m.onrender.com/swagger-ui/index.html)
+    ![render-deployment](./src/main/resources/static/render-deployment.png)
+    ![render-swagger-ui](./src/main/resources/static/render-swagger-ui.png)
 ---
 
 ## Key Classes and Functionalities
 
 - **Controllers**:
-  - `UserController`: Handles user-related operations.
-  - `JournalController`: Manages journal entries.
-  - `PublicController`: Handles non-authenticated endpoints.
+    - `UserController`: Handles user-related operations.
+    - `JournalController`: Manages journal entries.
+    - `PublicController`: Handles non-authenticated endpoints.
 
 - **Services**:
-  - `UserService`: Business logic for user management.
-  - `JournalService`: Core logic for journal operations.
-  - `WeatherService`: Integration with external weather APIs (Weather Stack).
+    - `UserService`: Business logic for user management.
+    - `JournalService`: Core logic for journal operations.
+    - `WeatherService`: Integration with external weather APIs (Weather Stack).
 
 - **Configuration**:
-  - `SpringSecurityConfig`: Secures application endpoints.
-  - `RedisConfig`: Configures Redis caching.
-  - `SwaggerConfig`: Enables API documentation.
+    - `SpringSecurityConfig`: Secures application endpoints.
+    - `RedisConfig`: Configures Redis caching.
+    - `SwaggerConfig`: Enables API documentation.
 
 - **Utilities**:
-  - `JwtUtil`: Handles JWT token creation and validation.
+    - `JwtUtil`: Handles JWT token creation and validation.
 
 ---
 
@@ -146,9 +155,9 @@ Journal-App
   ```
 
 - Includes test cases for:
-  - Repository methods
-  - Service layer logic
-  - Scheduler functionality
+    - Repository methods
+    - Service layer logic
+    - Scheduler functionality
 
 ---
 
@@ -157,3 +166,4 @@ Journal-App
 This project is licensed under the [MIT License](./LICENSE). See the LICENSE file for details.
 
 ---
+
