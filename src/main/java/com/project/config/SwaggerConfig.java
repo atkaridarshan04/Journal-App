@@ -23,8 +23,8 @@ public class SwaggerConfig {
                                 .description("A Spring Boot Project")
                 )
                 .servers(List.of(
-                        new Server().url("https://journal-app-9v4m.onrender.com").description("Production")
-                        new Server().url("http://localhost:8080").description("Local Server"),
+                        new Server().url("https://journal-app-9v4m.onrender.com").description("Production"),
+                        new Server().url("http://localhost:8080").description("Local Server")
                 ))
                 .tags(List.of(
                         new Tag().name("Public APIs").description("Accessed by all"),
