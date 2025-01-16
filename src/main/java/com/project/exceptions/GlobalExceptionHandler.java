@@ -1,6 +1,7 @@
 package com.project.exceptions;
 
 import com.project.dto.ErrorResponseDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -9,9 +10,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-@ControllerAdvice   // spring Boot recognizes as a way to handle exceptions globally across the entire application.
+@ControllerAdvice //spring Boot recognizes as a way to handle exceptions globally across the entire application.
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateUsernameException.class)
@@ -31,7 +34,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGeneralException(Exception ex, WebRequest request) {
-        ErrorResponseDTO errorResponse = new ErrorResponseDTO("An unexpected error occurred.", request.getDescription(false));
-        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        log.error("Error occurred: {}", ex.getMessage(), ex);
+        return new ResponseEntity<>(
+                new ErrorResponseDTO("An unexpected error occurred.", request.getDescription(false), LocalDateTime.now()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 }

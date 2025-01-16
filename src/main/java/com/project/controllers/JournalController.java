@@ -70,7 +70,6 @@ public class JournalController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getJournalEntryById(@PathVariable String id) {
         try {
-            ObjectId objId = new ObjectId(id);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
 
